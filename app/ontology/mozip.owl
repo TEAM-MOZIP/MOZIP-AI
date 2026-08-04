@@ -50,12 +50,12 @@ mz:Gender a owl:Class ;
 mz:AgeGroup a owl:Class ;
     rdfs:subClassOf mz:UserConcept ;
     rdfs:label "연령대"@ko ;
-    rdfs:comment "잠정안. SERVER에는 연령 구간 enum이 없고 birthDate/minimumAge/maximumAge 숫자만 있다. MOZIP-AI가 의미 관련도 계산용으로 임시 정의했으며, 확정적 자격 판정에는 사용하지 않는다. 추후 SERVER와 협의해 조정될 수 있다."@ko .
+    rdfs:comment "SERVER policy.domain.AgeGroup (정책 검색 연령 구간 필터). 확정적 자격 판정에는 사용하지 않고, 의미 관련도 계산에서만 참고한다."@ko .
 
 mz:Region a owl:Class ;
     rdfs:subClassOf mz:UserConcept ;
     rdfs:label "지역"@ko ;
-    rdfs:comment "SERVER regions 테이블. 시드 데이터가 없어 이번 MVP에서는 클래스만 정의하고 인스턴스는 비워둔다."@ko .
+    rdfs:comment "SERVER regions 테이블. db/testdata의 로컬 개발용 더미 시드 데이터를 반영했으며, 정식 프로덕션 시드는 아니라 확정되면 갱신이 필요하다."@ko .
 
 #################################################################
 # PolicyConcept 하위 클래스
@@ -79,7 +79,7 @@ mz:PolicyStatus a owl:Class ;
 mz:Category a owl:Class ;
     rdfs:subClassOf mz:PolicyConcept ;
     rdfs:label "정책 카테고리"@ko ;
-    rdfs:comment "SERVER categories 테이블. 시드 데이터가 없어 이번 MVP에서는 클래스만 정의하고 인스턴스는 비워둔다."@ko .
+    rdfs:comment "SERVER categories 테이블. db/testdata의 로컬 개발용 더미 시드 데이터를 반영했으며, 정식 프로덕션 시드는 아니라 확정되면 갱신이 필요하다."@ko .
 
 #################################################################
 # 관계 (Object Properties)
@@ -138,24 +138,16 @@ mz:MALE a mz:Gender ; rdfs:label "남성"@ko .
 mz:FEMALE a mz:Gender ; rdfs:label "여성"@ko .
 
 #################################################################
-# AgeGroup 값 (잠정안)
+# AgeGroup 값 (SERVER policy.domain.AgeGroup과 동일)
 #################################################################
 
-mz:Minor a mz:AgeGroup ;
-    rdfs:label "미성년자"@ko ;
-    rdfs:comment "만 19세 미만 (잠정)"@ko .
-
-mz:Youth a mz:AgeGroup ;
-    rdfs:label "청년"@ko ;
-    rdfs:comment "만 19세~34세 (잠정, 청년기본법 기준)"@ko .
-
-mz:MiddleAged a mz:AgeGroup ;
-    rdfs:label "중장년"@ko ;
-    rdfs:comment "만 35세~64세 (잠정)"@ko .
-
-mz:Senior a mz:AgeGroup ;
-    rdfs:label "노년"@ko ;
-    rdfs:comment "만 65세 이상 (잠정, 노인복지법 기준)"@ko .
+mz:UNDER_19 a mz:AgeGroup ; rdfs:label "19세 미만"@ko ; rdfs:comment "~18세"@ko .
+mz:AGE_19_24 a mz:AgeGroup ; rdfs:label "19~24세"@ko .
+mz:AGE_25_29 a mz:AgeGroup ; rdfs:label "25~29세"@ko .
+mz:AGE_30_34 a mz:AgeGroup ; rdfs:label "30~34세"@ko .
+mz:AGE_35_49 a mz:AgeGroup ; rdfs:label "35~49세"@ko .
+mz:AGE_50_64 a mz:AgeGroup ; rdfs:label "50~64세"@ko .
+mz:AGE_65_PLUS a mz:AgeGroup ; rdfs:label "65세 이상"@ko ; rdfs:comment "65세~"@ko .
 
 #################################################################
 # RegionScope 값
@@ -181,3 +173,24 @@ mz:OPEN a mz:PolicyStatus ; rdfs:label "공개"@ko .
 mz:CLOSED a mz:PolicyStatus ; rdfs:label "종료"@ko .
 mz:ALWAYS_OPEN a mz:PolicyStatus ; rdfs:label "상시 공개"@ko .
 mz:SUSPENDED a mz:PolicyStatus ; rdfs:label "중지"@ko .
+
+#################################################################
+# Region 값 (SERVER db/testdata 로컬 더미 시드, 프로덕션 확정 아님)
+#################################################################
+
+mz:SEOUL a mz:Region ; rdfs:label "서울특별시"@ko .
+mz:GYEONGGI a mz:Region ; rdfs:label "경기도"@ko .
+mz:BUSAN a mz:Region ; rdfs:label "부산광역시"@ko .
+mz:INCHEON a mz:Region ; rdfs:label "인천광역시"@ko .
+mz:DAEGU a mz:Region ; rdfs:label "대구광역시"@ko .
+
+#################################################################
+# Category 값 (SERVER db/testdata 로컬 더미 시드, 프로덕션 확정 아님)
+#################################################################
+
+mz:HOUSING a mz:Category ; rdfs:label "주거"@ko .
+mz:EMPLOYMENT a mz:Category ; rdfs:label "취업"@ko .
+mz:STARTUP a mz:Category ; rdfs:label "창업"@ko .
+mz:EDUCATION a mz:Category ; rdfs:label "교육"@ko .
+mz:WELFARE a mz:Category ; rdfs:label "복지"@ko .
+mz:CULTURE a mz:Category ; rdfs:label "문화"@ko .
