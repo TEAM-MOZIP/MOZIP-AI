@@ -35,15 +35,15 @@ def test_maps_all_axes_when_all_present(graph):
         "employment_status",
         "household_type",
         "income_type",
-        "region_code",
-        "birth_date",
+        "region",
+        "age_group",
     }
 
     gender_concept = mapped_by_field["gender"]
     assert gender_concept.concept_code == "MALE"
     assert gender_concept.concept_uri == "http://mozip.ai/ontology#MALE"
 
-    age_group_concept = mapped_by_field["birth_date"]
+    age_group_concept = mapped_by_field["age_group"]
     assert age_group_concept.concept_code == "AGE_25_29"
     assert age_group_concept.concept_uri == "http://mozip.ai/ontology#AGE_25_29"
 
@@ -59,8 +59,8 @@ def test_missing_optional_fields_marked_missing_value(graph):
         "employment_status": UnmappedReason.MISSING_VALUE,
         "household_type": UnmappedReason.MISSING_VALUE,
         "income_type": UnmappedReason.MISSING_VALUE,
-        "region_code": UnmappedReason.MISSING_VALUE,
-        "birth_date": UnmappedReason.MISSING_VALUE,
+        "region": UnmappedReason.MISSING_VALUE,
+        "age_group": UnmappedReason.MISSING_VALUE,
     }
 
 
@@ -70,8 +70,8 @@ def test_unknown_region_code_marked_unknown_value(graph):
     result = map_user(input_data, graph, REFERENCE_DATE)
 
     unmapped_by_field = {u.field: u.reason for u in result.unmapped}
-    assert unmapped_by_field["region_code"] == UnmappedReason.UNKNOWN_VALUE
-    assert "region_code" not in {c.field for c in result.concepts}
+    assert unmapped_by_field["region"] == UnmappedReason.UNKNOWN_VALUE
+    assert "region" not in {c.field for c in result.concepts}
 
 
 @pytest.mark.parametrize(
@@ -97,7 +97,7 @@ def test_age_group_boundaries(graph, age, expected_age_group):
 
     result = map_user(input_data, graph, REFERENCE_DATE)
 
-    age_group_concepts = [c for c in result.concepts if c.field == "birth_date"]
+    age_group_concepts = [c for c in result.concepts if c.field == "age_group"]
     assert len(age_group_concepts) == 1
     assert age_group_concepts[0].concept_code == expected_age_group
 
@@ -111,8 +111,8 @@ def test_age_calculation_respects_birthday_not_yet_reached(graph):
     passed_result = map_user(birthday_already_passed, graph, REFERENCE_DATE)
     not_yet_result = map_user(birthday_not_yet_reached, graph, REFERENCE_DATE)
 
-    passed_age_group = next(c for c in passed_result.concepts if c.field == "birth_date")
-    not_yet_age_group = next(c for c in not_yet_result.concepts if c.field == "birth_date")
+    passed_age_group = next(c for c in passed_result.concepts if c.field == "age_group")
+    not_yet_age_group = next(c for c in not_yet_result.concepts if c.field == "age_group")
 
     assert passed_age_group.concept_code == "AGE_25_29"
     assert not_yet_age_group.concept_code == "AGE_19_24"

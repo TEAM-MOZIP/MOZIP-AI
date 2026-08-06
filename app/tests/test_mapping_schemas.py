@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from app.schemas.mapping import UserMappingInput
+from app.schemas.mapping import MappedConcept, UnmappedField, UnmappedReason, UserMappingInput
 
 
 def test_gender_is_required():
@@ -38,3 +38,17 @@ def test_invalid_household_type_value_rejected():
 def test_invalid_income_type_value_rejected():
     with pytest.raises(ValidationError):
         UserMappingInput(gender="MALE", income_type="RELATIVE")
+
+
+def test_mapped_concept_rejects_unknown_axis_string():
+    with pytest.raises(ValidationError):
+        MappedConcept(
+            field="not_a_real_axis",
+            concept_uri="http://mozip.ai/ontology#MALE",
+            concept_code="MALE",
+        )
+
+
+def test_unmapped_field_rejects_unknown_axis_string():
+    with pytest.raises(ValidationError):
+        UnmappedField(field="not_a_real_axis", reason=UnmappedReason.MISSING_VALUE)
