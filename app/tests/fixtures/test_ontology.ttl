@@ -1,0 +1,17 @@
+@prefix mz: <http://mozip.ai/test-ontology#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# 운영 온톨로지(app/ontology/mozip.owl)와 분리된 테스트 전용 최소 온톨로지.
+
+mz:TestConcept a owl:Class .
+
+mz:TestSubConcept a owl:Class ;
+    rdfs:subClassOf mz:TestConcept .
+
+mz:relatedTo a owl:ObjectProperty .
+
+mz:ValueA a mz:TestSubConcept .
+mz:ValueB a mz:TestSubConcept .
+
+mz:ValueA mz:relatedTo mz:ValueB .

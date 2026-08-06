@@ -1,0 +1,196 @@
+@prefix mz: <http://mozip.ai/ontology#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# MOZIP 온톨로지 MVP 스키마
+#
+# 개념 범위는 추측이 아니라 docs/ai-integration/ontology-server-fields.md에 정리된
+# MOZIP-SERVER 실제 필드/enum 기준을 따른다. SERVER에 구조화 필드·enum이 없는 개념
+# (Interest, TargetGroup, PolicyPurpose, SupportType, LifeCycle)은 포함하지 않는다.
+
+<http://mozip.ai/ontology>
+    a owl:Ontology ;
+    rdfs:comment "MOZIP 온톨로지 MVP 스키마"@ko .
+
+#################################################################
+# 최상위 개념
+#################################################################
+
+mz:UserConcept a owl:Class ;
+    rdfs:label "사용자 개념"@ko .
+
+mz:PolicyConcept a owl:Class ;
+    rdfs:label "정책 개념"@ko .
+
+#################################################################
+# UserConcept 하위 클래스
+#################################################################
+
+mz:EmploymentStatus a owl:Class ;
+    rdfs:subClassOf mz:UserConcept ;
+    rdfs:label "고용 상태"@ko ;
+    rdfs:comment "SERVER UserProfile.employmentStatus (EmploymentStatus)"@ko .
+
+mz:HouseholdType a owl:Class ;
+    rdfs:subClassOf mz:UserConcept ;
+    rdfs:label "가구 형태"@ko ;
+    rdfs:comment "SERVER UserProfile.householdType (HouseholdType)"@ko .
+
+mz:IncomeType a owl:Class ;
+    rdfs:subClassOf mz:UserConcept ;
+    rdfs:label "소득 유형"@ko ;
+    rdfs:comment "SERVER UserProfile.incomeType / PolicyEligibility.incomeType (IncomeType)"@ko .
+
+mz:Gender a owl:Class ;
+    rdfs:subClassOf mz:UserConcept ;
+    rdfs:label "성별"@ko ;
+    rdfs:comment "값 도메인은 확정(MALE/FEMALE)되었으나 SERVER API는 아직 자유 문자열을 반환한다 (enum 전환 구현 대기). 매핑 시 허용값 외 문자열은 버려야 한다."@ko .
+
+mz:AgeGroup a owl:Class ;
+    rdfs:subClassOf mz:UserConcept ;
+    rdfs:label "연령대"@ko ;
+    rdfs:comment "SERVER policy.domain.AgeGroup (정책 검색 연령 구간 필터). 확정적 자격 판정에는 사용하지 않고, 의미 관련도 계산에서만 참고한다."@ko .
+
+mz:Region a owl:Class ;
+    rdfs:subClassOf mz:UserConcept ;
+    rdfs:label "지역"@ko ;
+    rdfs:comment "SERVER regions 테이블. db/testdata의 로컬 개발용 더미 시드 데이터를 반영했으며, 정식 프로덕션 시드는 아니라 확정되면 갱신이 필요하다."@ko .
+
+#################################################################
+# PolicyConcept 하위 클래스
+#################################################################
+
+mz:RegionScope a owl:Class ;
+    rdfs:subClassOf mz:PolicyConcept ;
+    rdfs:label "지역 범위"@ko ;
+    rdfs:comment "SERVER Policy.regionScope (RegionScope)"@ko .
+
+mz:ApplicationType a owl:Class ;
+    rdfs:subClassOf mz:PolicyConcept ;
+    rdfs:label "신청 방식"@ko ;
+    rdfs:comment "SERVER Policy.applicationType (ApplicationType)"@ko .
+
+mz:PolicyStatus a owl:Class ;
+    rdfs:subClassOf mz:PolicyConcept ;
+    rdfs:label "정책 상태"@ko ;
+    rdfs:comment "SERVER Policy.status (PolicyStatus)"@ko .
+
+mz:Category a owl:Class ;
+    rdfs:subClassOf mz:PolicyConcept ;
+    rdfs:label "정책 카테고리"@ko ;
+    rdfs:comment "SERVER categories 테이블. db/testdata의 로컬 개발용 더미 시드 데이터를 반영했으며, 정식 프로덕션 시드는 아니라 확정되면 갱신이 필요하다."@ko .
+
+#################################################################
+# 관계 (Object Properties)
+#
+# 매핑/관련도 계산 이슈에서 실제 인스턴스 간 관계로 사용한다.
+# 이번 이슈에서는 관계 자체(속성)만 정의하고, 인스턴스 간 관계 트리플은 만들지 않는다.
+#################################################################
+
+mz:isA a owl:ObjectProperty ;
+    rdfs:label "IS_A"@en .
+
+mz:partOf a owl:ObjectProperty ;
+    rdfs:label "PART_OF"@en .
+
+mz:targets a owl:ObjectProperty ;
+    rdfs:label "TARGETS"@en .
+
+mz:requires a owl:ObjectProperty ;
+    rdfs:label "REQUIRES"@en .
+
+mz:availableIn a owl:ObjectProperty ;
+    rdfs:label "AVAILABLE_IN"@en .
+
+mz:relatedTo a owl:ObjectProperty ;
+    rdfs:label "RELATED_TO"@en .
+
+#################################################################
+# EmploymentStatus 값
+#################################################################
+
+mz:EMPLOYED a mz:EmploymentStatus ; rdfs:label "재직중"@ko .
+mz:UNEMPLOYED a mz:EmploymentStatus ; rdfs:label "미취업"@ko .
+mz:JOB_SEEKER a mz:EmploymentStatus ; rdfs:label "구직중"@ko .
+
+#################################################################
+# HouseholdType 값
+#################################################################
+
+mz:SINGLE a mz:HouseholdType ; rdfs:label "1인 가구"@ko .
+mz:ELDERLY a mz:HouseholdType ; rdfs:label "노인 가구"@ko .
+mz:SINGLE_PARENT a mz:HouseholdType ; rdfs:label "한부모 가구"@ko .
+mz:DISABLED a mz:HouseholdType ; rdfs:label "장애인 가구"@ko .
+
+#################################################################
+# IncomeType 값
+#################################################################
+
+mz:ABSOLUTE a mz:IncomeType ; rdfs:label "절대 소득"@ko .
+mz:MEDIAN_PERCENTAGE a mz:IncomeType ; rdfs:label "기준중위소득 비율"@ko .
+
+#################################################################
+# Gender 값
+#################################################################
+
+mz:MALE a mz:Gender ; rdfs:label "남성"@ko .
+mz:FEMALE a mz:Gender ; rdfs:label "여성"@ko .
+
+#################################################################
+# AgeGroup 값 (SERVER policy.domain.AgeGroup과 동일)
+#################################################################
+
+mz:UNDER_19 a mz:AgeGroup ; rdfs:label "19세 미만"@ko ; rdfs:comment "~18세"@ko .
+mz:AGE_19_24 a mz:AgeGroup ; rdfs:label "19~24세"@ko .
+mz:AGE_25_29 a mz:AgeGroup ; rdfs:label "25~29세"@ko .
+mz:AGE_30_34 a mz:AgeGroup ; rdfs:label "30~34세"@ko .
+mz:AGE_35_49 a mz:AgeGroup ; rdfs:label "35~49세"@ko .
+mz:AGE_50_64 a mz:AgeGroup ; rdfs:label "50~64세"@ko .
+mz:AGE_65_PLUS a mz:AgeGroup ; rdfs:label "65세 이상"@ko ; rdfs:comment "65세~"@ko .
+
+#################################################################
+# RegionScope 값
+#################################################################
+
+mz:NATIONAL a mz:RegionScope ; rdfs:label "전국"@ko .
+mz:REGIONAL a mz:RegionScope ; rdfs:label "지역"@ko .
+
+#################################################################
+# ApplicationType 값
+#################################################################
+
+mz:PERIOD a mz:ApplicationType ; rdfs:label "기간 신청"@ko .
+mz:ALWAYS a mz:ApplicationType ; rdfs:label "상시 신청"@ko .
+mz:UNKNOWN a mz:ApplicationType ; rdfs:label "확인 불가"@ko .
+
+#################################################################
+# PolicyStatus 값
+#################################################################
+
+mz:DRAFT a mz:PolicyStatus ; rdfs:label "초안"@ko .
+mz:OPEN a mz:PolicyStatus ; rdfs:label "공개"@ko .
+mz:CLOSED a mz:PolicyStatus ; rdfs:label "종료"@ko .
+mz:ALWAYS_OPEN a mz:PolicyStatus ; rdfs:label "상시 공개"@ko .
+mz:SUSPENDED a mz:PolicyStatus ; rdfs:label "중지"@ko .
+
+#################################################################
+# Region 값 (SERVER db/testdata 로컬 더미 시드, 프로덕션 확정 아님)
+#################################################################
+
+mz:SEOUL a mz:Region ; rdfs:label "서울특별시"@ko .
+mz:GYEONGGI a mz:Region ; rdfs:label "경기도"@ko .
+mz:BUSAN a mz:Region ; rdfs:label "부산광역시"@ko .
+mz:INCHEON a mz:Region ; rdfs:label "인천광역시"@ko .
+mz:DAEGU a mz:Region ; rdfs:label "대구광역시"@ko .
+
+#################################################################
+# Category 값 (SERVER db/testdata 로컬 더미 시드, 프로덕션 확정 아님)
+#################################################################
+
+mz:HOUSING a mz:Category ; rdfs:label "주거"@ko .
+mz:EMPLOYMENT a mz:Category ; rdfs:label "취업"@ko .
+mz:STARTUP a mz:Category ; rdfs:label "창업"@ko .
+mz:EDUCATION a mz:Category ; rdfs:label "교육"@ko .
+mz:WELFARE a mz:Category ; rdfs:label "복지"@ko .
+mz:CULTURE a mz:Category ; rdfs:label "문화"@ko .

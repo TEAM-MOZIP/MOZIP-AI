@@ -9,6 +9,7 @@ class Settings(BaseSettings):
 
     app_name: str = "MOZIP-AI"
     environment: Literal["local", "development", "production"] = "local"
+    ontology_file_path: str = "app/ontology/mozip.owl"
 
 
 @lru_cache
