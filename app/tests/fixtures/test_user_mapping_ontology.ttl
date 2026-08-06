@@ -2,8 +2,8 @@
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-# User Mapper 테스트 전용 최소 온톨로지. 운영 mozip.owl과 동일한 네임스페이스를
-# 쓰되, User Mapper 테스트에 필요한 최소 클래스·개념만 포함한다.
+# User/Policy Mapper 테스트 전용 최소 온톨로지. 운영 mozip.owl과 동일한 네임스페이스를
+# 쓰되, Mapper 테스트에 필요한 최소 클래스·개념만 포함한다.
 
 mz:UserConcept a owl:Class .
 
