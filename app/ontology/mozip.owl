@@ -45,7 +45,7 @@ mz:IncomeType a owl:Class ;
 mz:Gender a owl:Class ;
     rdfs:subClassOf mz:UserConcept ;
     rdfs:label "성별"@ko ;
-    rdfs:comment "값 도메인은 확정(MALE/FEMALE)되었으나 SERVER API는 아직 자유 문자열을 반환한다 (enum 전환 구현 대기). 매핑 시 허용값 외 문자열은 버려야 한다."@ko .
+    rdfs:comment "SERVER Gender enum 전환 완료. 허용값은 MALE/FEMALE이며, 허용되지 않은 값은 Mapper가 아니라 Pydantic 입력 검증 단계에서 거부한다."@ko .
 
 mz:AgeGroup a owl:Class ;
     rdfs:subClassOf mz:UserConcept ;
