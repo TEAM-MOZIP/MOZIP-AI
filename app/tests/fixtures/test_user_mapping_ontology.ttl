@@ -1,0 +1,40 @@
+@prefix mz: <http://mozip.ai/ontology#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# User Mapper 테스트 전용 최소 온톨로지. 운영 mozip.owl과 동일한 네임스페이스를
+# 쓰되, User Mapper 테스트에 필요한 최소 클래스·개념만 포함한다.
+
+mz:UserConcept a owl:Class .
+
+mz:Gender a owl:Class ; rdfs:subClassOf mz:UserConcept .
+mz:EmploymentStatus a owl:Class ; rdfs:subClassOf mz:UserConcept .
+mz:HouseholdType a owl:Class ; rdfs:subClassOf mz:UserConcept .
+mz:IncomeType a owl:Class ; rdfs:subClassOf mz:UserConcept .
+mz:Region a owl:Class ; rdfs:subClassOf mz:UserConcept .
+mz:AgeGroup a owl:Class ; rdfs:subClassOf mz:UserConcept .
+
+mz:MALE a mz:Gender .
+mz:FEMALE a mz:Gender .
+
+mz:EMPLOYED a mz:EmploymentStatus .
+mz:UNEMPLOYED a mz:EmploymentStatus .
+mz:JOB_SEEKER a mz:EmploymentStatus .
+
+mz:SINGLE a mz:HouseholdType .
+mz:ELDERLY a mz:HouseholdType .
+mz:SINGLE_PARENT a mz:HouseholdType .
+mz:DISABLED a mz:HouseholdType .
+
+mz:ABSOLUTE a mz:IncomeType .
+mz:MEDIAN_PERCENTAGE a mz:IncomeType .
+
+mz:SEOUL a mz:Region .
+
+mz:UNDER_19 a mz:AgeGroup .
+mz:AGE_19_24 a mz:AgeGroup .
+mz:AGE_25_29 a mz:AgeGroup .
+mz:AGE_30_34 a mz:AgeGroup .
+mz:AGE_35_49 a mz:AgeGroup .
+mz:AGE_50_64 a mz:AgeGroup .
+mz:AGE_65_PLUS a mz:AgeGroup .
