@@ -74,6 +74,18 @@ def test_unknown_region_code_marked_unknown_value(graph):
     assert "region" not in {c.field for c in result.concepts}
 
 
+def test_seoul_district_region_code_maps_without_mapper_changes(graph):
+    # 서울 자치구 code(mozip.owl에 SEOUL의 하위로 추가된 개념)도 코드 변경 없이
+    # 기존 URI 조회 로직만으로 매핑되는지 확인하는 회귀 테스트.
+    input_data = UserMappingInput(gender="MALE", region_code="SEOUL_GANGNAM")
+
+    result = map_user(input_data, graph, REFERENCE_DATE)
+
+    region_concept = next(c for c in result.concepts if c.field == "region")
+    assert region_concept.concept_code == "SEOUL_GANGNAM"
+    assert region_concept.concept_uri == "http://mozip.ai/ontology#SEOUL_GANGNAM"
+
+
 @pytest.mark.parametrize(
     ("age", "expected_age_group"),
     [

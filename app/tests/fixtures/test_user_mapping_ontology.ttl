@@ -30,6 +30,7 @@ mz:ABSOLUTE a mz:IncomeType .
 mz:MEDIAN_PERCENTAGE a mz:IncomeType .
 
 mz:SEOUL a mz:Region .
+mz:SEOUL_GANGNAM a mz:Region ; mz:partOf mz:SEOUL .
 
 mz:UNDER_19 a mz:AgeGroup .
 mz:AGE_19_24 a mz:AgeGroup .
