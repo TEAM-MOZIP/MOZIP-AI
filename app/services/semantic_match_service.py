@@ -16,4 +16,4 @@ def calculate_semantic_match(
 ) -> SemanticMatchResult:
     user_mapping = map_user(user_input, graph, reference_date)
     policy_mapping = map_policy(policy_input, graph)
-    return match_concepts(user_mapping, policy_mapping)
+    return match_concepts(user_mapping, policy_mapping, graph)
