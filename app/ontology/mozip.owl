@@ -55,7 +55,7 @@ mz:AgeGroup a owl:Class ;
 mz:Region a owl:Class ;
     rdfs:subClassOf mz:UserConcept ;
     rdfs:label "지역"@ko ;
-    rdfs:comment "SERVER regions 테이블. db/testdata의 로컬 개발용 더미 시드 데이터를 반영했으며, 정식 프로덕션 시드는 아니라 확정되면 갱신이 필요하다."@ko .
+    rdfs:comment "SERVER regions 테이블. 서울특별시와 서울 25개 자치구 2단계 계층만 다룬다(docs/ai-integration/region-contract.md 참조). 자치구는 mz:partOf로 SEOUL과 연결되며, 이 관계는 SERVER의 Region.parent 1단계 비교와 1:1로 대응한다."@ko .
 
 #################################################################
 # PolicyConcept 하위 클래스
@@ -175,14 +175,38 @@ mz:ALWAYS_OPEN a mz:PolicyStatus ; rdfs:label "상시 공개"@ko .
 mz:SUSPENDED a mz:PolicyStatus ; rdfs:label "중지"@ko .
 
 #################################################################
-# Region 값 (SERVER db/testdata 로컬 더미 시드, 프로덕션 확정 아님)
+# Region 값 (서울특별시 + 서울 25개 자치구, SERVER 확정 계약 — 26개)
+# docs/ai-integration/region-contract.md 참조. 자치구는 mz:partOf로 SEOUL과
+# 정확히 1홉 관계를 가지며, SEOUL은 어떤 상위 개체에도 partOf 관계를 갖지 않는다.
 #################################################################
 
 mz:SEOUL a mz:Region ; rdfs:label "서울특별시"@ko .
-mz:GYEONGGI a mz:Region ; rdfs:label "경기도"@ko .
-mz:BUSAN a mz:Region ; rdfs:label "부산광역시"@ko .
-mz:INCHEON a mz:Region ; rdfs:label "인천광역시"@ko .
-mz:DAEGU a mz:Region ; rdfs:label "대구광역시"@ko .
+
+mz:SEOUL_JONGNO a mz:Region ; rdfs:label "종로구"@ko ; mz:partOf mz:SEOUL .
+mz:SEOUL_JUNG a mz:Region ; rdfs:label "중구"@ko ; mz:partOf mz:SEOUL .
+mz:SEOUL_YONGSAN a mz:Region ; rdfs:label "용산구"@ko ; mz:partOf mz:SEOUL .
+mz:SEOUL_SEONGDONG a mz:Region ; rdfs:label "성동구"@ko ; mz:partOf mz:SEOUL .
+mz:SEOUL_GWANGJIN a mz:Region ; rdfs:label "광진구"@ko ; mz:partOf mz:SEOUL .
+mz:SEOUL_DONGDAEMUN a mz:Region ; rdfs:label "동대문구"@ko ; mz:partOf mz:SEOUL .
+mz:SEOUL_JUNGNANG a mz:Region ; rdfs:label "중랑구"@ko ; mz:partOf mz:SEOUL .
+mz:SEOUL_SEONGBUK a mz:Region ; rdfs:label "성북구"@ko ; mz:partOf mz:SEOUL .
+mz:SEOUL_GANGBUK a mz:Region ; rdfs:label "강북구"@ko ; mz:partOf mz:SEOUL .
+mz:SEOUL_DOBONG a mz:Region ; rdfs:label "도봉구"@ko ; mz:partOf mz:SEOUL .
+mz:SEOUL_NOWON a mz:Region ; rdfs:label "노원구"@ko ; mz:partOf mz:SEOUL .
+mz:SEOUL_EUNPYEONG a mz:Region ; rdfs:label "은평구"@ko ; mz:partOf mz:SEOUL .
+mz:SEOUL_SEODAEMUN a mz:Region ; rdfs:label "서대문구"@ko ; mz:partOf mz:SEOUL .
+mz:SEOUL_MAPO a mz:Region ; rdfs:label "마포구"@ko ; mz:partOf mz:SEOUL .
+mz:SEOUL_YANGCHEON a mz:Region ; rdfs:label "양천구"@ko ; mz:partOf mz:SEOUL .
+mz:SEOUL_GANGSEO a mz:Region ; rdfs:label "강서구"@ko ; mz:partOf mz:SEOUL .
+mz:SEOUL_GURO a mz:Region ; rdfs:label "구로구"@ko ; mz:partOf mz:SEOUL .
+mz:SEOUL_GEUMCHEON a mz:Region ; rdfs:label "금천구"@ko ; mz:partOf mz:SEOUL .
+mz:SEOUL_YEONGDEUNGPO a mz:Region ; rdfs:label "영등포구"@ko ; mz:partOf mz:SEOUL .
+mz:SEOUL_DONGJAK a mz:Region ; rdfs:label "동작구"@ko ; mz:partOf mz:SEOUL .
+mz:SEOUL_GWANAK a mz:Region ; rdfs:label "관악구"@ko ; mz:partOf mz:SEOUL .
+mz:SEOUL_SEOCHO a mz:Region ; rdfs:label "서초구"@ko ; mz:partOf mz:SEOUL .
+mz:SEOUL_GANGNAM a mz:Region ; rdfs:label "강남구"@ko ; mz:partOf mz:SEOUL .
+mz:SEOUL_SONGPA a mz:Region ; rdfs:label "송파구"@ko ; mz:partOf mz:SEOUL .
+mz:SEOUL_GANGDONG a mz:Region ; rdfs:label "강동구"@ko ; mz:partOf mz:SEOUL .
 
 #################################################################
 # Category 값 (SERVER db/testdata 로컬 더미 시드, 프로덕션 확정 아님)
