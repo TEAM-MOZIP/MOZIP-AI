@@ -3,6 +3,7 @@ from datetime import date
 from rdflib import Graph, Namespace
 
 from app.core.exceptions import AppException
+from app.ontology.age_group import AGE_GROUP_BANDS, age_group_name
 from app.ontology.graph import concept_exists
 from app.schemas.mapping import (
     ConceptMapping,
@@ -17,17 +18,6 @@ from app.schemas.mapping import (
 
 MZ = Namespace("http://mozip.ai/ontology#")
 
-# SERVER policy.domain.AgeGroup과 동일한 구간. (이름, 최소 나이, 최대 나이) — 경계값 포함.
-_AGE_GROUP_BANDS: list[tuple[str, int | None, int | None]] = [
-    ("UNDER_19", None, 18),
-    ("AGE_19_24", 19, 24),
-    ("AGE_25_29", 25, 29),
-    ("AGE_30_34", 30, 34),
-    ("AGE_35_49", 35, 49),
-    ("AGE_50_64", 50, 64),
-    ("AGE_65_PLUS", 65, None),
-]
-
 
 def _calculate_age(birth_date: date, reference_date: date) -> int:
     if birth_date > reference_date:
@@ -41,13 +31,6 @@ def _calculate_age(birth_date: date, reference_date: date) -> int:
     if (reference_date.month, reference_date.day) < (birth_date.month, birth_date.day):
         age -= 1
     return age
-
-
-def _age_group_name(age: int) -> str:
-    for name, band_min, band_max in _AGE_GROUP_BANDS:
-        if (band_min is None or age >= band_min) and (band_max is None or age <= band_max):
-            return name
-    raise AssertionError(f"AgeGroup 구간이 나이 {age}를 포함하지 않습니다.")  # pragma: no cover
 
 
 def _age_group_names_for_range(minimum_age: int | None, maximum_age: int | None) -> list[str]:
@@ -74,7 +57,7 @@ def _age_group_names_for_range(minimum_age: int | None, maximum_age: int | None)
         )
 
     names = []
-    for name, band_min, band_max in _AGE_GROUP_BANDS:
+    for name, band_min, band_max in AGE_GROUP_BANDS:
         lower_ok = minimum_age is None or band_max is None or band_max >= minimum_age
         upper_ok = maximum_age is None or band_min is None or band_min <= maximum_age
         if lower_ok and upper_ok:
@@ -160,7 +143,7 @@ def map_user(input_data: UserMappingInput, graph: Graph, reference_date: date) -
         )
     else:
         age = _calculate_age(input_data.birth_date, reference_date)
-        _map_field(graph, MappingAxis.AGE_GROUP, _age_group_name(age), concepts, unmapped)
+        _map_field(graph, MappingAxis.AGE_GROUP, age_group_name(age), concepts, unmapped)
 
     return ConceptMapping(concepts=concepts, unmapped=unmapped)
 
