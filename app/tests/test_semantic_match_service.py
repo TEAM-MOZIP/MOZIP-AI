@@ -42,7 +42,7 @@ def test_service_result_matches_manual_pipeline(graph):
 
     user_mapping = map_user(user_input, graph, REFERENCE_DATE)
     policy_mapping = map_policy(policy_input, graph)
-    expected = match_concepts(user_mapping, policy_mapping)
+    expected = match_concepts(user_mapping, policy_mapping, graph)
 
     assert actual == expected
 
