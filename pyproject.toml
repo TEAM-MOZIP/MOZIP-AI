@@ -18,9 +18,13 @@ dev = [
     "pytest-asyncio>=1.4.0",
     "ruff>=0.16.1",
 ]
+evaluation = [
+    "huggingface-hub>=1.27.0",
+    "pyarrow>=25.0.1",
+]
 
 [tool.pytest.ini_options]
-testpaths = ["app/tests"]
+testpaths = ["app/tests", "evaluation/nemotron/tests"]
 
 [tool.ruff]
 target-version = "py312"
