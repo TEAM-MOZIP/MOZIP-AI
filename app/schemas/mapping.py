@@ -1,7 +1,8 @@
 from datetime import date
 from enum import StrEnum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
+from pydantic.alias_generators import to_camel
 
 
 class Gender(StrEnum):
@@ -42,6 +43,8 @@ class MappingAxis(StrEnum):
 
 
 class UserMappingInput(BaseModel):
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
+
     gender: Gender
     birth_date: date | None = None
     region_code: str | None = None
@@ -51,6 +54,8 @@ class UserMappingInput(BaseModel):
 
 
 class PolicyMappingInput(BaseModel):
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
+
     region_scope: RegionScope
     region_codes: list[str] = Field(default_factory=list)
     minimum_age: int | None = None
