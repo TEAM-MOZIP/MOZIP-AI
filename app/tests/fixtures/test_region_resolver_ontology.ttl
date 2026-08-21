@@ -1,0 +1,12 @@
+@prefix mz: <http://mozip.ai/ontology#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# Region resolver 테스트 전용 최소 온톨로지. 2음절 구 생략형 규칙("강남")과
+# 1음절 예외("중")를 함께 검증하기 위한 최소 셋만 포함한다.
+
+mz:Region a owl:Class .
+
+mz:SEOUL a mz:Region ; rdfs:label "서울특별시"@ko .
+mz:SEOUL_GANGNAM a mz:Region ; rdfs:label "강남구"@ko ; mz:partOf mz:SEOUL .
+mz:SEOUL_JUNG a mz:Region ; rdfs:label "중구"@ko ; mz:partOf mz:SEOUL .
