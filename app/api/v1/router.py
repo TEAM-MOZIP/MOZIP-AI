@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from app.api.v1.conditions import router as conditions_router
 from app.api.v1.guides import router as guides_router
 from app.api.v1.health import router as health_router
 from app.api.v1.recommendations import router as recommendations_router
@@ -14,3 +15,4 @@ router.include_router(recommendations_router)
 router.include_router(terms_router)
 router.include_router(guides_router)
 router.include_router(summaries_router)
+router.include_router(conditions_router)
