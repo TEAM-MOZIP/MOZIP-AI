@@ -39,6 +39,13 @@ class PolicyDetailGrounding(BaseModel):
     organization: str
 
 
+class ChatTurn(BaseModel):
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
+
+    message: str
+    reply: str
+
+
 class ChatResponseRequest(BaseModel):
     model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
 
@@ -46,6 +53,7 @@ class ChatResponseRequest(BaseModel):
     grounding_policies: list[GroundingPolicy] = Field(default_factory=list)
     policy_detail: PolicyDetailGrounding | None = None
     unresolved_conditions: list[GroundingUnresolvedCondition] = Field(default_factory=list)
+    history: list[ChatTurn] = Field(default_factory=list)
 
     @field_validator("message")
     @classmethod
