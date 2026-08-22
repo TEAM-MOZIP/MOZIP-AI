@@ -79,6 +79,37 @@ def test_grounding_payload_is_accepted():
     assert response.json() == {"reply": "답변입니다."}
 
 
+def test_history_payload_is_accepted():
+    fake = _FakeLlmClient(response=_fake_response())
+    app.dependency_overrides[get_llm_client] = lambda: fake
+
+    response = client.post(
+        ENDPOINT,
+        json=_payload(
+            message="그거 신청 기간은?",
+            history=[
+                {
+                    "message": "국민취업지원제도 알려줘",
+                    "reply": "국민취업지원제도는 구직자를 지원하는 제도입니다.",
+                }
+            ],
+        ),
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {"reply": "답변입니다."}
+
+
+def test_request_without_history_still_returns_200():
+    fake = _FakeLlmClient(response=_fake_response())
+    app.dependency_overrides[get_llm_client] = lambda: fake
+
+    response = client.post(ENDPOINT, json=_payload())
+
+    assert response.status_code == 200
+    assert response.json() == {"reply": "답변입니다."}
+
+
 def test_missing_message_returns_422():
     app.dependency_overrides[get_llm_client] = lambda: _FakeLlmClient(response=_fake_response())
     payload = _payload()
