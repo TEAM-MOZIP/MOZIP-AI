@@ -20,12 +20,25 @@ SYSTEM_INSTRUCTION = (
     "현재 지원하지 않는다고 안내합니다.\n"
     "- unresolvedConditions가 있으면, 확인하지 못한 조건이 있다는 사실을 "
     "자연스럽게 안내합니다.\n"
+    "- history가 있으면 이전 사용자 질문과 AI 답변을 참고해 현재 질문의 문맥"
+    "(지시대명사, 생략된 주어, 이전에 언급된 대상 등)을 해석합니다. history는 "
+    "문맥을 이해하는 용도로만 사용하고, groundingPolicies와 policyDetail에 "
+    "없는 새로운 정책 사실을 history만으로 만들어내지 않습니다. 이전 답변에 "
+    "포함되지 않았던 정보를 물어보면, 확인할 수 없다고 안내합니다.\n"
     "- 쉬운 한국어로 명확하게 답합니다."
 )
 
 
 def build_user_content(request: ChatResponseRequest) -> str:
     lines = [f"사용자 질문: {request.message}"]
+
+    if request.history:
+        lines.append("대화 기록:")
+        for turn in request.history:
+            lines.append(f"- 이전 사용자 메시지: {turn.message}")
+            lines.append(f"  이전 AI 답변: {turn.reply}")
+    else:
+        lines.append("대화 기록: 없음")
 
     if request.grounding_policies:
         lines.append("조건에 맞는 정책 목록:")
