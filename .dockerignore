@@ -1,0 +1,15 @@
+.git
+.venv
+.pytest_cache
+.ruff_cache
+__pycache__
+*.pyc
+.claude
+docs
+*.md
+.env
+.env.*
+!.env.example
+evaluation
+app/tests
+.DS_Store
