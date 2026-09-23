@@ -20,6 +20,8 @@ class GroundingPolicy(BaseModel):
     title: str
     eligibility_status: EligibilityStatus
     application_end_date: date | None = None
+    # 정책 한 줄 요약. SERVER가 보내지 않으면 None — 제목만으로 안내한다.
+    summary: str | None = None
 
 
 class GroundingUnresolvedCondition(BaseModel):
@@ -37,6 +39,12 @@ class PolicyDetailGrounding(BaseModel):
     eligibility: str
     application_period: str
     organization: str
+    # 아래는 SERVER가 보낼 때만 채워지는 선택 항목이다. 없으면 None — 해당 항목은 설명하지 않는다.
+    benefit: str | None = None
+    application_method: str | None = None
+    required_documents: str | None = None
+    contact: str | None = None
+    application_url: str | None = None
 
 
 class ChatTurn(BaseModel):
