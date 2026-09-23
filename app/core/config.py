@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     # SERVER→AI timeout(현재 3초, Semantic Match 값)은 이 값을 그대로 복사한 게 아니라
     # B-1 SERVER 연동 Issue에서 이번 실측 데이터를 근거로 별도로 재설계한다.
     gemini_timeout_seconds: float = 2.5
+    # 챗봇 답변(/chat/respond)은 여러 문단의 긴 답변 + 대화 이력을 다뤄 2.5초 안에 끝나지
+    # 않는 경우가 잦다(되묻기 턴에서 INTERNAL_ERROR). 챗봇 호출에만 넉넉한 timeout을 쓴다.
+    gemini_chat_timeout_seconds: float = 15.0
 
 
 @lru_cache
