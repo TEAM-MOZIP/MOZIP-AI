@@ -17,7 +17,11 @@ class LlmClient:
         self._timeout_seconds = timeout_seconds
 
     def generate_structured(
-        self, system_instruction: str, user_content: str, response_schema: type[T]
+        self,
+        system_instruction: str,
+        user_content: str,
+        response_schema: type[T],
+        timeout_seconds: float | None = None,
     ) -> T:
         try:
             interaction = self._client.interactions.create(
@@ -33,7 +37,7 @@ class LlmClient:
                     "mime_type": "application/json",
                     "schema": response_schema.model_json_schema(),
                 },
-                timeout=self._timeout_seconds,
+                timeout=timeout_seconds if timeout_seconds is not None else self._timeout_seconds,
             )
         except Exception as exc:
             raise AppException(

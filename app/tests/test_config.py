@@ -8,6 +8,7 @@ def test_settings_default_values(monkeypatch):
     monkeypatch.delenv("GEMINI_API_KEY", raising=False)
     monkeypatch.delenv("GEMINI_MODEL", raising=False)
     monkeypatch.delenv("GEMINI_TIMEOUT_SECONDS", raising=False)
+    monkeypatch.delenv("GEMINI_CHAT_TIMEOUT_SECONDS", raising=False)
 
     settings = Settings(_env_file=None)
 
@@ -18,6 +19,7 @@ def test_settings_default_values(monkeypatch):
     # alias("gemini-flash-lite-latest")가 아니라 확인된 구체 stable 모델 ID여야 한다.
     assert settings.gemini_model == "gemini-3.5-flash-lite"
     assert settings.gemini_timeout_seconds == 2.5
+    assert settings.gemini_chat_timeout_seconds == 15.0
 
 
 def test_settings_reads_from_environment(monkeypatch):
