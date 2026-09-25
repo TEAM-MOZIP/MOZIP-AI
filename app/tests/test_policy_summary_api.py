@@ -14,7 +14,14 @@ class _FakeLlmClient:
         self._response = response
         self._error = error
 
-    def generate_structured(self, system_instruction, user_content, response_schema):
+    def generate_structured(
+        self,
+        system_instruction,
+        user_content,
+        response_schema,
+        timeout_seconds=None,
+        thinking_level=None,
+    ):
         if self._error is not None:
             raise self._error
         return self._response
