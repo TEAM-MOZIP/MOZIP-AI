@@ -21,7 +21,9 @@ class Settings(BaseSettings):
     gemini_timeout_seconds: float = 2.5
     # 챗봇 답변(/chat/respond)은 여러 문단의 긴 답변 + 대화 이력을 다뤄 2.5초 안에 끝나지
     # 않는 경우가 잦다(되묻기 턴에서 INTERNAL_ERROR). 챗봇 호출에만 넉넉한 timeout을 쓴다.
-    gemini_chat_timeout_seconds: float = 15.0
+    # 블록 답변(카드·단계·비교표)은 출력이 길어 신청 방법처럼 원문이 긴 질문은 15초를 넘길 수 있다.
+    # SERVER 대기(30초)와 운영 nginx /api/chat(40초) 안에 끝나도록 25초로 둔다.
+    gemini_chat_timeout_seconds: float = 25.0
     # 신청 가이드(/guides/generate)는 여러 단계와 준비 서류를 구조화해 생성하느라 2.5초를 자주 넘긴다.
     # 넘기면 SERVER가 원문을 그대로 한 단계로 보여주므로 가이드에도 넉넉한 timeout을 쓴다.
     gemini_guide_timeout_seconds: float = 12.0
