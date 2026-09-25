@@ -2,6 +2,7 @@ import pytest
 from pydantic import ValidationError
 
 from app.schemas.policy_summary import PolicySummaryRequest, PolicySummaryResponse
+from app.core.config import get_settings
 from app.services.policy_summary_service import generate_policy_summary
 
 
@@ -11,8 +12,18 @@ class _FakeLlmClient:
         self.last_system_instruction: str | None = None
         self.last_user_content: str | None = None
         self.last_response_schema: type | None = None
+        self.last_timeout_seconds: float | None = None
 
-    def generate_structured(self, system_instruction, user_content, response_schema):
+    def generate_structured(
+        self,
+        system_instruction,
+        user_content,
+        response_schema,
+        timeout_seconds=None,
+        thinking_level=None,
+    ):
+        self.last_timeout_seconds = timeout_seconds
+        self.last_thinking_level = thinking_level
         self.last_system_instruction = system_instruction
         self.last_user_content = user_content
         self.last_response_schema = response_schema
@@ -120,3 +131,13 @@ def test_policy_summary_response_accepts_non_blank_summary():
     )
 
     assert response.summary == "청년 구직자를 대상으로 취업 지원 서비스를 제공하는 정책입니다."
+
+
+def test_generate_policy_summary_uses_summary_timeout():
+    fake_client = _FakeLlmClient(_build_response())
+    request = PolicySummaryRequest(title="국민취업지원제도", description="실업부조 제도입니다.")
+
+    generate_policy_summary(request, fake_client)
+
+    assert fake_client.last_timeout_seconds == get_settings().gemini_summary_timeout_seconds
+    assert fake_client.last_thinking_level == get_settings().gemini_fast_thinking_level

@@ -168,3 +168,21 @@ def test_generate_structured_overrides_timeout_when_given():
     client.generate_structured("system", "user", _SampleSchema, timeout_seconds=15.0)
 
     assert interactions.last_call_kwargs["timeout"] == 15.0
+
+
+def test_generate_structured_passes_thinking_level_when_given():
+    interactions = _FakeInteractionsResource(output_text='{"value": "hello"}')
+    client = _build_client(interactions)
+
+    client.generate_structured("system", "user", _SampleSchema, thinking_level="minimal")
+
+    assert interactions.last_call_kwargs["generation_config"] == {"thinking_level": "minimal"}
+
+
+def test_generate_structured_omits_generation_config_without_thinking_level():
+    interactions = _FakeInteractionsResource(output_text='{"value": "hello"}')
+    client = _build_client(interactions)
+
+    client.generate_structured("system", "user", _SampleSchema)
+
+    assert "generation_config" not in interactions.last_call_kwargs
