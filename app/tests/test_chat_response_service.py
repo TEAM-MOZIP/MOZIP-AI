@@ -28,7 +28,7 @@ class _FakeLlmClient:
         self.last_timeout_seconds: float | None = None
 
     def generate_structured(
-        self, system_instruction, user_content, response_schema, timeout_seconds=None
+        self, system_instruction, user_content, response_schema, timeout_seconds=None, thinking_level=None
     ):
         self.last_timeout_seconds = timeout_seconds
         self.last_system_instruction = system_instruction
