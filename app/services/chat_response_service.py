@@ -30,6 +30,7 @@ def generate_chat_response(
         user_content,
         ChatResponseResponse,
         timeout_seconds=get_settings().gemini_chat_timeout_seconds,
+        thinking_level=get_settings().gemini_fast_thinking_level,
     )
     sanitized = _sanitize(response, request)
     # 화면에 블록이 기대대로 안 나올 때 원인을 가르기 위한 로그: 모델이 만든 블록과 정리 후 남은 블록.
