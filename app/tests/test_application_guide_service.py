@@ -3,6 +3,7 @@ from app.schemas.application_guide import (
     ApplicationGuideResponse,
     ApplicationGuideStep,
 )
+from app.core.config import get_settings
 from app.services.application_guide_service import generate_application_guide
 
 
@@ -12,8 +13,18 @@ class _FakeLlmClient:
         self.last_system_instruction: str | None = None
         self.last_user_content: str | None = None
         self.last_response_schema: type | None = None
+        self.last_timeout_seconds: float | None = None
 
-    def generate_structured(self, system_instruction, user_content, response_schema):
+    def generate_structured(
+        self,
+        system_instruction,
+        user_content,
+        response_schema,
+        timeout_seconds=None,
+        thinking_level=None,
+    ):
+        self.last_timeout_seconds = timeout_seconds
+        self.last_thinking_level = thinking_level
         self.last_system_instruction = system_instruction
         self.last_user_content = user_content
         self.last_response_schema = response_schema
@@ -74,3 +85,13 @@ def test_generate_application_guide_omits_missing_optional_source():
     generate_application_guide(request, fake_client)
 
     assert "필요 서류 원문" not in fake_client.last_user_content
+
+
+def test_generate_application_guide_uses_guide_timeout():
+    fake_client = _FakeLlmClient(_build_response())
+    request = ApplicationGuideRequest(application_instructions="온라인으로 신청합니다.")
+
+    generate_application_guide(request, fake_client)
+
+    assert fake_client.last_timeout_seconds == get_settings().gemini_guide_timeout_seconds
+    assert fake_client.last_thinking_level == get_settings().gemini_fast_thinking_level

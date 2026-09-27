@@ -14,7 +14,9 @@ class _FakeLlmClient:
         self._response = response
         self._error = error
 
-    def generate_structured(self, system_instruction, user_content, response_schema):
+    def generate_structured(
+        self, system_instruction, user_content, response_schema, timeout_seconds=None
+    ):
         if self._error is not None:
             raise self._error
         return self._response
@@ -46,7 +48,13 @@ def test_returns_200_with_camel_case_response():
     response = client.post(ENDPOINT, json=_payload())
 
     assert response.status_code == 200
-    assert response.json() == {"reply": "답변입니다."}
+    body = response.json()
+    assert body["reply"] == "답변입니다."
+    assert body["responseType"] == "GENERAL"
+    # 블록이 없으면 reply를 텍스트 블록으로 내려준다
+    assert [block["type"] for block in body["blocks"]] == ["TEXT"]
+    assert body["blocks"][0]["text"] == "답변입니다."
+    assert body["followUps"] == []
 
 
 def test_grounding_payload_is_accepted():
@@ -76,7 +84,7 @@ def test_grounding_payload_is_accepted():
     )
 
     assert response.status_code == 200
-    assert response.json() == {"reply": "답변입니다."}
+    assert response.json()["reply"] == "답변입니다."
 
 
 def test_history_payload_is_accepted():
@@ -97,7 +105,7 @@ def test_history_payload_is_accepted():
     )
 
     assert response.status_code == 200
-    assert response.json() == {"reply": "답변입니다."}
+    assert response.json()["reply"] == "답변입니다."
 
 
 def test_request_without_history_still_returns_200():
@@ -107,7 +115,7 @@ def test_request_without_history_still_returns_200():
     response = client.post(ENDPOINT, json=_payload())
 
     assert response.status_code == 200
-    assert response.json() == {"reply": "답변입니다."}
+    assert response.json()["reply"] == "답변입니다."
 
 
 def test_missing_message_returns_422():
