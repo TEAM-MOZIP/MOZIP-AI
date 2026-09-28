@@ -14,7 +14,7 @@ class _FakeLlmClient:
     def __init__(self, expressions: _ConditionExpressions) -> None:
         self._expressions = expressions
 
-    def generate_structured(self, system_instruction, user_content, response_schema):
+    def generate_structured(self, system_instruction, user_content, response_schema, **kwargs):
         return self._expressions
 
 
