@@ -73,6 +73,19 @@ class ChatTurn(BaseModel):
     reply: str
 
 
+class UserCondition(BaseModel):
+    """서버가 추출한 사용자 조건. 값이 None이면 해당 조건을 사용자가 말하지 않은 것이다."""
+
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
+
+    age: int | None = None
+    region: str | None = None            # 지역명 (예: "서울특별시 강남구")
+    employment_status: str | None = None  # "EMPLOYED" | "UNEMPLOYED" | "JOB_SEEKER"
+    household_type: str | None = None     # "SINGLE" | "ELDERLY" | "SINGLE_PARENT" | "DISABLED"
+    income_type: str | None = None        # "ABSOLUTE" | "MEDIAN_PERCENTAGE"
+    income_value: int | None = None       # ABSOLUTE: 만 원 단위 / MEDIAN_PERCENTAGE: % 값
+
+
 class ChatResponseRequest(BaseModel):
     model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
 
@@ -81,6 +94,8 @@ class ChatResponseRequest(BaseModel):
     policy_detail: PolicyDetailGrounding | None = None
     unresolved_conditions: list[GroundingUnresolvedCondition] = Field(default_factory=list)
     history: list[ChatTurn] = Field(default_factory=list)
+    # 서버가 추출한 사용자 조건. 없으면 None — 조건 없이 키워드·제목으로만 찾은 경우.
+    user_condition: UserCondition | None = None
 
     @field_validator("message")
     @classmethod

@@ -28,7 +28,7 @@ SYSTEM_INSTRUCTION = (
     "  · fit: BEST(질문 주제에 직접 맞는 정책) / RELATED(주제는 다르지만 사용자 상황에 도움이 되는 정책) / "
     "EXCLUDE(질문 주제와도 사용자 상황과도 맞지 않는 정책, 사용자가 말하지 않은 특수한 대상 — 예: 폭력피해자, "
     "장애인, 한부모 — 만을 위한 정책). 예: '주거 정책'을 물었으면 월세·전세·주택 정책은 BEST, 아이돌봄·보육료는 "
-    "RELATED 또는 EXCLUDE입니다. 비교·특정 정책 질문에서 다룬 정책은 BEST입니다.\n"
+    "RELATED 또는 EXCLUDE입니다. 비교 질문에서 비교 대상인 정책은 BEST입니다. 단, 같은 이름의 변형 정책(예: '무료 소송대리 서비스(경찰·소방공무원)', '무료 소송대리 서비스(전시납북자가족)')이라도 사용자가 해당하지 않는 특수 대상(가습기살균제피해자·전시납북자가족·경찰·소방공무원·장애인·한부모 등)만을 위한 정책은 EXCLUDE로 처리한다.\n"
     "  · reason: 사용자가 말한 조건과 정책 대상(target)을 연결해 왜 추천하는지 한 줄로 씁니다"
     "(예: '5세 자녀가 있는 무주택 가구가 대상이에요'). 사용자가 말하지 않은 조건을 지어내지 않습니다. "
     "EXCLUDE면 빈 문자열.\n"
@@ -40,33 +40,35 @@ SYSTEM_INSTRUCTION = (
     "(예: '신청 방법 알려줘', '소득 조건 자세히 알려줘'). 인사·일반 대화에는 비워도 됩니다. "
     "맞춤법·조사를 정확히 씁니다(예: '어느 쪽을 받을 수 있어?').\n"
     "\n"
-    "[유형 고르기]\n"
-    "- RECOMMEND: 조건·관심 분야로 정책을 찾는 질문이고 groundingPolicies가 있을 때.\n"
-    "- COMPARE: 두 개 이상의 정책을 비교해 달라는 질문이고, 비교할 정책이 모두 주어졌을 때.\n"
-    "- HOW_TO_APPLY: 신청 방법·절차·서류를 묻고 policyDetail이 있을 때.\n"
-    "- ELIGIBILITY: '나 받을 수 있어?'처럼 자격을 묻고 policyDetail이 있을 때.\n"
-    "- CLARIFY: 너무 넓은 질문('나한테 맞는 정책 알려줘')이라 관심 분야나 핵심 조건 하나를 먼저 물어야 할 때.\n"
-    "- TERM: 행정 용어의 뜻을 묻는 질문.\n"
-    "- NO_RESULT: 정책을 찾는 질문인데 groundingPolicies와 policyDetail이 모두 비어 있을 때.\n"
-    "- GENERAL: 인사·감사 같은 가벼운 대화, 특정 정책을 자세히 설명해 달라는 질문, 그 밖의 경우.\n"
+    "[유형 고르기] — 아래 순서대로 판단해 처음 해당하는 유형 하나를 고른다.\n"
+    "1. TERM: 용어·개념의 뜻을 묻는 질문이면 다른 조건 상관없이 TERM. '기준 중위소득이 뭐예요', '중위소득 100%는 얼마예요', '소득분위가 뭐야', '차상위계층이 뭔가요', '긴급복지가 뭐야' 같은 질문. policyDetail·groundingPolicies 유무에 상관없이 용어 설명이 핵심이면 TERM.\n"
+    "2. COMPARE: 두 개 이상의 정책을 비교해 달라는 질문이고 비교할 정책이 모두 주어졌을 때.\n"
+    "3. ELIGIBILITY: 사용자가 자격을 묻는 표현('받을 수 있어', '자격 돼', '해당 돼', '신청할 수 있어', '대상인지', '받아볼 수 있을까', '나도 되나요')을 썼고 — policyDetail 또는 groundingPolicies에 eligibilityStatus가 있을 때.\n"
+    "4. HOW_TO_APPLY: 신청 방법·절차·서류·준비물을 묻고 policyDetail이 있을 때. '어떻게 신청', '신청 절차', '준비 서류', '필요 서류', '신청 방법' 같은 질문.\n"
+    "5. RECOMMEND: groundingPolicies가 1개 이상 있을 때(서버가 사용자 조건이나 키워드로 미리 필터한 결과다). ELIGIBILITY·COMPARE·HOW_TO_APPLY에 해당하지 않는 경우.\n"
+    "6. CLARIFY: groundingPolicies가 없고 policyDetail도 없고, 질문이 너무 넓어 관심 분야나 핵심 조건 하나를 먼저 물어야 할 때('나한테 맞는 정책 알려줘', '뭐가 있어?' 같은 질문).\n"
+    "7. NO_RESULT: 정책을 찾는 질문인데 groundingPolicies와 policyDetail이 모두 비어 있을 때.\n"
+    "8. GENERAL: 인사·감사 같은 가벼운 대화, 특정 정책을 자세히 설명해 달라는 질문, 그 밖의 경우(용어 뜻 질문은 TERM으로 처리하고 GENERAL로 처리하지 않는다).\n"
     "\n"
     "[유형별 블록 구성]\n"
-    "- RECOMMEND: TEXT(사용자가 말한 조건을 되짚는 1~2문장) 하나. 정책 소개는 policyNotes에 씁니다"
+    "- RECOMMEND: TEXT 하나. 사용자 조건(사용자 조건 섹션 참고)이 있으면 '나이·지역·취업상태 조건으로 찾아봤어요' 처럼 조건을 한 문장으로 되짚는다."
+    " 조건이 없으면 '[키워드] 관련 정책이에요' 처럼 검색 맥락 한 문장. 정책 소개는 policyNotes에 씁니다"
     "(화면이 BEST는 '딱 맞는 정책', RELATED는 '함께 보면 좋은 정책'으로 묶어 보여줍니다).\n"
     "- COMPARE: TEXT(한 문장) → COMPARISON(지원 방식·대상·지원 규모·신청 기간 등 주어진 정보로 채울 수 있는 "
     "행만. 정보가 없는 칸은 '정보 없음') → CONCLUSION(사용자 상황 기준 한 줄 결론). policyNotes의 reason은 "
     "각 정책의 핵심 한 줄로 씁니다.\n"
-    "- HOW_TO_APPLY: TEXT(신청 방식 한 문장) → STEPS(title '신청 절차', applicationMethod를 순서대로 나눈 단계. "
+    "- HOW_TO_APPLY: applicationMethod가 있으면 → TEXT(신청 방식 한 문장) → STEPS(title '신청 절차', applicationMethod를 순서대로 나눈 단계. "
     "최대 6단계, 단계 설명은 한 문장) → "
     "CHECKLIST(title '준비 서류', requiredDocuments가 있을 때만). 원문에 없는 단계·서류는 지어내지 않습니다. "
-    "policyDetail에 applicationGuideAttached=true가 있으면 신청 절차·준비 서류는 화면이 따로 붙이므로 STEPS·"
-    "CHECKLIST를 만들지 않고 TEXT 한두 문장만 씁니다. "
+    "applicationMethod가 없으면 STEPS를 만들지 않고 TEXT 하나로 '정확한 신청 절차는 아래 정책 카드를 눌러 확인해 주세요'라고 안내합니다. "
     "신청 링크 버튼은 화면이 따로 붙이므로 링크 주소를 쓰지 않습니다.\n"
     "- ELIGIBILITY: TEXT(판정을 쉬운 말로 한두 문장). policyDetail.conditionResults가 있으면 그 판정만 그대로 "
-    "설명합니다(조건별 표는 화면이 따로 붙입니다). 확인이 필요한 조건(NEEDS_REVIEW)이 있으면 그 조건을 "
+    "설명합니다(조건별 표는 화면이 따로 붙입니다). policyDetail 없이 groundingPolicies만 있을 때는 "
+    "eligibilityStatus별로 '조건에 맞아요', '확인이 필요해요' 등으로 정책마다 판정을 TEXT에 요약하고 "
+    "policyNotes에 이유를 씁니다. 확인이 필요한 조건(NEEDS_REVIEW)이 있으면 그 조건을 "
     "물어보는 QUICK_REPLIES(예: 소득 구간 선택지)를 붙입니다.\n"
     "- CLARIFY: TEXT(질문 한 가지) → QUICK_REPLIES(선택지). 한 번에 한 가지만 묻습니다.\n"
-    "- TERM: TERM 블록 하나. 용어의 일반적인 뜻을 쉬운 말로 설명합니다.\n"
+    "- TERM: TERM 블록 하나. 용어의 일반적인 뜻을 쉬운 말로 설명합니다. policyNotes는 모두 EXCLUDE로 처리한다(용어 설명에 정책 카드는 필요 없다).\n"
     "- NO_RESULT: TEXT(지금 조건으로는 맞는 정책을 찾지 못했다는 말) → QUICK_REPLIES(조건을 바꿔 다시 찾을 수 "
     "있는 제안, 예: '지역을 서울 전체로 넓혀서 찾아줘', '다른 분야도 보여줘'). 정책 개수를 지어내지 않습니다.\n"
     "- 인사·감사('고마워') 같은 가벼운 말에는 policyDetail이나 groundingPolicies가 있어도 GENERAL로 짧게 답하고 "
@@ -113,6 +115,29 @@ def build_user_content(request: ChatResponseRequest) -> str:
             lines.append(f"  이전 AI 답변: {turn.reply}")
     else:
         lines.append("대화 기록: 없음")
+
+    if request.user_condition:
+        c = request.user_condition
+        condition_parts = []
+        if c.age is not None:
+            condition_parts.append(f"나이={c.age}세")
+        if c.region:
+            condition_parts.append(f"지역={c.region}")
+        if c.employment_status:
+            label = {"EMPLOYED": "재직중", "UNEMPLOYED": "미취업", "JOB_SEEKER": "구직중"}.get(c.employment_status, c.employment_status)
+            condition_parts.append(f"취업상태={label}")
+        if c.household_type:
+            label = {"SINGLE": "1인가구", "ELDERLY": "노인가구", "SINGLE_PARENT": "한부모가구", "DISABLED": "장애인가구"}.get(c.household_type, c.household_type)
+            condition_parts.append(f"가구형태={label}")
+        if c.income_type and c.income_value is not None:
+            if c.income_type == "ABSOLUTE":
+                condition_parts.append(f"소득={c.income_value}만원")
+            else:
+                condition_parts.append(f"기준중위소득={c.income_value}%")
+        if condition_parts:
+            lines.append(f"사용자 조건(서버가 정책 필터에 사용한 조건): {', '.join(condition_parts)}")
+    else:
+        lines.append("사용자 조건: 없음(조건 없이 키워드·제목으로 검색)")
 
     if request.grounding_policies:
         lines.append("조건에 맞는 정책 목록:")
