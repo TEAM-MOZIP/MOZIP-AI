@@ -1,6 +1,7 @@
 from rdflib import Graph
 
 from app.clients.llm_client import LlmClient
+from app.core.config import get_settings
 from app.core.exceptions import AppException
 from app.ontology.region_resolver import resolve_region
 from app.prompts.condition_extraction import SYSTEM_INSTRUCTION, build_user_content
@@ -46,7 +47,8 @@ def extract_conditions(
     request: ConditionExtractionRequest, llm_client: LlmClient, graph: Graph
 ) -> ConditionExtractionResponse:
     expressions = llm_client.generate_structured(
-        SYSTEM_INSTRUCTION, build_user_content(request.free_text), _ConditionExpressions
+        SYSTEM_INSTRUCTION, build_user_content(request.free_text), _ConditionExpressions,
+        timeout_seconds=get_settings().gemini_condition_timeout_seconds,
     )
 
     _assert_expressions_are_verbatim_substrings(expressions, request.free_text)
